@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "g++.exe",
+          "type": "cppdbg",
+          "request": "launch",
+          "program": "${workspaceFolder}\\output\\${fileBasenameNoExtension}.exe",
+          "args": [],
+          "stopAtEntry": false,
+          "cwd": "${workspaceFolder}",
+          "environment": [],
+          "externalConsole": true,
+          "MIMode": "gdb",
+          "miDebuggerPath": "D:\\CodeConfig\\MinGW\\bin\\gdb.exe",		/*修改成自己bin目录下的gdb.exe*/
+          "setupCommands": [
+              {
+                  "description": "为 gdb 启用整齐打印",
+                  "text": "-enable-pretty-printing",
+                  "ignoreFailures": true
+              }
+          ],
+          "preLaunchTask": "g++"
+      }
+  ]
+}
