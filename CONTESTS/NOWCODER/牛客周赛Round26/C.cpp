@@ -11,6 +11,15 @@ int n, m;
 int dist[N][N];
 bool st[N][N];
 
+struct Node
+{
+	int a, b, val;
+	bool operator>(const Node& other) const
+	{
+		return val > other.val;
+	}
+};
+
 void work()
 {
 	cin >> n >> m;
@@ -21,16 +30,16 @@ void work()
 
 	
 	int dx[] = { 0, 1, 0 }, dy[] = { 1, 0, -1 };
-	queue<PII>q;
+	priority_queue<Node, vector<Node>, greater<Node>>q;
 	memset(dist, 0x3f, sizeof(dist));
-	q.push({ 0, 0 });
+	q.push({ 0, 0, 0 });
 	dist[0][0] = 0;
-	st[0][0] = true;
 	while (!q.empty())
 	{
-		int x = q.front().first, y = q.front().second;
+		auto [x, y, d] = q.top();
         q.pop();
-        st[x][y] = false;
+		if (st[x][y])continue;
+		st[x][y] = true;
         for (int i = 0; i < 3; i++)
         {
             int nx = x + dx[i], ny = y + dy[i];
@@ -39,11 +48,7 @@ void work()
 			if (dist[nx][ny] > dist[x][y] + val)
 			{
 				dist[nx][ny] = dist[x][y] + val;
-                if (!st[nx][ny])
-                {
-                    st[nx][ny] = true;
-                    q.push({ nx, ny });
-                }
+                q.push({ nx, ny, dist[nx][ny] });
 			}
         }
 	}

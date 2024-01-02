@@ -11,7 +11,6 @@ void work()
 {
     string str;
     cin >> str;
-    string res;
     int x = 0, y = 0;
     for (int i = 0; i < str.size(); i++)
     {
@@ -19,21 +18,8 @@ void work()
         while (j < str.size() && str[j] == str[i])j++;
         if ((j - i) & 1)
         {
-            res.push_back(str[i]);
             if (str[i] == '1')x++;
             else y++;
-        }
-        else 
-        {
-            if (str[i] == '1')
-            {
-                res.push_back('0');
-                res.push_back('0');
-            }
-            else
-            {
-                res.push_back(str[i]), res.push_back(str[i]);
-            }
         }
         i = j - 1;
     }
