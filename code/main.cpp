@@ -2,48 +2,51 @@
 
 using namespace std;
 
+typedef pair<int, int> PII;
 typedef long long LL;
-typedef pair<int, int>PII;
 
-const int N = 200010;
+const int N = 10010;
 
-bool st[N];
-int cnt = 0;
-vector<int>prime;
-
-void primes(int n = 1000000)
+void work(vector<int> heights)
 {
-    for (int i = 2; i <= n; i++)
+    int q[N];
+    int hh = 0, tt = -1;
+    int n = heights.size();
+    vector<int> res(n);
+    for (int i = n - 1; i >= 0; i--)
     {
-        if (!st[i])
+        // for (int i = hh; i <= tt; i++)
+        //     cout << q[i] << " " << heights[q[i]] << endl;
+        // cout << endl;
+        if (hh <= tt)
         {
-            prime.push_back(i);
-        }
-        for (int j = 1; prime[j] <= n / i; j++)
-        {
-            int t = prime[j] * i;
-            st[t] = true;
-            if (!(i % prime[j]))
+            int l = hh, r = tt;
+            while (l < r)
             {
-                break;
+                int mid = l + r + 1 >> 1;
+                if (heights[q[mid]] >= heights[i]) l = mid;
+                else r = mid - 1;
             }
+            if (l == tt)res[i] = 1;
+            else res[i] = tt - l + 1;
         }
-    }
-}
 
-void work()
-{
-    
+        while (hh <= tt && heights[i] >= heights[q[tt]]) tt--;
+        q[++tt] = i;
+    }
+    for (int i = 0; i < res.size(); i++)
+        cout << res[i] << " ";
+    cout << endl;
 }
 
 int main()
 {
-    ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
-	int t = 1;
-    cin >> t;
+    int t = 1;
+    // cin >> t;
     while (t--)
     {
-        work();
+        vector<int> a = {10, 6, 8, 5, 11, 9};
+        work(a);
     }
-	return 0;
+    return 0;
 }
