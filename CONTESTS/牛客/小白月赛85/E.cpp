@@ -32,33 +32,26 @@ void work()
     LL last = 0;
     for (int i = 1; i <= n; i++)
     {
-        while (true)
-        {
-            if (mx >= last + a[i])//能放下id号机器
+        if (mx >= last + a[i])//能放下id号机器
             {
                 res.push_back({ i, id, last, last + a[i] });
-                last += a[i];
-                if (last == mx)
-                {
-                    id++;
-                    last = 0;
-                }
-                break;
             }
             else
             {
-                if (last == mx)
-                {
-                    id++;
-                    last = 0;
-                    continue;
-                }
-                res.push_back({ i, id, last, mx });
+                res.push_back( { i, id, last, mx });
+                a[i] -= mx - last;
+                id++;
+                last = 0;
+                res.push_back({ i, id, last, last + a[i] });
+            }
+            last += a[i];
+            if (last == mx)
+            {
                 id++;
                 last = 0;
             }
-        }
     }
+    cout << res.size() << endl;
     for (auto [a, b, c, d] : res)cout << a << " " << b << " " << c << " " << d << endl;
 
 }
