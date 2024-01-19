@@ -25,15 +25,13 @@ LL get(vector<LL>a)
 	
 	LL l = 0, r = 0;
 	LL sum = 0;
-	for (int i = 0; i < n; i++)cout << a[i] << " ";
-	cout << endl;
+
 	while (l < n)
 	{
 		while (sum <= 0 && r < n)
 		{
 			sum += a[r++];
 		}
-		cout << l << " " << r << " " << sum << endl;
 		if (sum > 0)res = max(res, r - l);
 		sum -= a[l++];
 	}

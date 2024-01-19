@@ -1,52 +1,30 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-typedef pair<int, int> PII;
-typedef long long LL;
+class FormatItem{
+public: 
+    typedef shared_ptr<FormatItem> ptr;
+    FormatItem(const std::string& fmt = ""){}
+    virtual ~FormatItem() {}
+    
+    virtual void format() = 0;
+};
 
-const int N = 10010;
-
-void work(vector<int> heights)
-{
-    int q[N];
-    int hh = 0, tt = -1;
-    int n = heights.size();
-    vector<int> res(n);
-    for (int i = n - 1; i >= 0; i--)
-    {
-        // for (int i = hh; i <= tt; i++)
-        //     cout << q[i] << " " << heights[q[i]] << endl;
-        // cout << endl;
-        if (hh <= tt)
-        {
-            int l = hh, r = tt;
-            while (l < r)
-            {
-                int mid = l + r + 1 >> 1;
-                if (heights[q[mid]] >= heights[i]) l = mid;
-                else r = mid - 1;
-            }
-            if (l == tt)res[i] = 1;
-            else res[i] = tt - l + 1;
-        }
-
-        while (hh <= tt && heights[i] >= heights[q[tt]]) tt--;
-        q[++tt] = i;
+class MessageFormatItem: public FormatItem{
+public:
+    MessageFormatItem(const std::string& fmt = ""){};
+    void format(){
+        std::cout << "MessageFormatItem" << std::endl;
     }
-    for (int i = 0; i < res.size(); i++)
-        cout << res[i] << " ";
-    cout << endl;
-}
+};
 
 int main()
 {
-    int t = 1;
-    // cin >> t;
-    while (t--)
-    {
-        vector<int> a = {10, 6, 8, 5, 11, 9};
-        work(a);
-    }
-    return 0;
+    static std::map<std::string, std::function<FormatItem::ptr(const std::string& str)>> s_format_items = {
+#define XX(str, C) \
+         {#str, [](const std::string& fmt) { return FormatItem::ptr(new C(fmt));}}
+
+        XX(m, MessageFormatItem),           //m:消息
+#undef XX
+    };
 }
