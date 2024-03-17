@@ -80,6 +80,7 @@ def work():
 
     for val in res:
         val = int(val)
+        last = -1
         for year in res[val]:
             if year == 2022:
                 continue
@@ -87,13 +88,8 @@ def work():
             if cnt[val][year] != 4:    
                 for name in res[val][year]:
                     print(1)
-            else:
-                for name in res[val][year]:
-                    if name == 'position':
-                        continue
-                    print(res[val][year][name])
-
-
+        
+        last = val
 
 
     row = 0
