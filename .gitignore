@@ -1,3 +1,4 @@
-output/
+output/*
 .cph/
 .vscode/
+data/*
