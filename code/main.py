@@ -27,6 +27,7 @@ def work():
     for index, row in df.iterrows():
         year = df.iloc[index, 2]
         idx = df.iloc[index, 0]
+        position = df.iloc[index, 4]
         if pd.isna(idx):
             continue
 
@@ -51,12 +52,15 @@ def work():
             if column_name not in st:
                 continue
             
-
+            
             if idx not in res:
                 res[idx] = {}
 
             if year not in res[idx]:
                 res[idx][year] = {}
+            
+            if "position" not in res[idx][year]:
+                res[idx][year]["position"] = position
             
             if column_name not in res[idx][year]:
                 res[idx][year][column_name] = value
@@ -71,22 +75,48 @@ def work():
  
     # 创建新的sheet表
     worksheet = workbook.add_sheet("Sheet1")
-
     
-    row = 0
 
-    worksheet.write(row, 0, "证券代码")
-    worksheet.write(row, 1, "年")
-    worksheet.write(row, 2, "上市公司碳排放总量（吨）")
-    worksheet.write(row, 3, "化石燃料燃烧排放")
-    worksheet.write(row, 4, "生物质燃料燃烧排放")
-    worksheet.write(row, 5, "原料开采逃逸排放")
-    worksheet.write(row, 6, "石油和天然气系统逃逸排放")
-    worksheet.write(row, 7, "电力调入调出间接碳排放")
-    worksheet.write(row, 8, "生产过程排放")
-    worksheet.write(row, 9, "固体废弃物焚烧排放")
-    worksheet.write(row, 10, "污水处理导致的排放")
-    worksheet.write(row, 11, "土地利用方式转变（森林转为工业用地）导致的排放")
+
+    for val in res:
+        val = int(val)
+        for year in res[val]:
+            if year == 2022:
+                continue
+            print(val, year, res[val][year]['position'])
+            if cnt[val][year] != 4:    
+                for name in res[val][year]:
+                    print(1)
+            else:
+                for name in res[val][year]:
+                    if name == 'position':
+                        continue
+                    print(res[val][year][name])
+
+
+
+
+    row = 0
+    colList = []
+    colList.append("证券代码")
+    colList.append("年")
+    colList.append("行业")
+    colList.append("上市公司碳排放总量（吨）")
+    colList.append("化石燃料燃烧排放")
+    colList.append("生物质燃料燃烧排放")
+    colList.append("原料开采逃逸排放")
+    colList.append("石油和天然气系统逃逸排放")
+    colList.append("电力调入调出间接碳排放")
+    colList.append("生产过程排放")
+    colList.append("固体废弃物焚烧排放")
+    colList.append("污水处理导致的排放")
+    colList.append("土地利用方式转变（森林转为工业用地）导致的排放")
+
+    col = 0
+    for value in colList:
+        worksheet.write(0, col, value)
+        col += 1
+
     row += 1
     for val in res:
         val = int(val)
@@ -94,24 +124,32 @@ def work():
         # print(val, year)
         for year in res[val]:
             
+            if year == 2022:
+                continue
+            
             worksheet.write(row, 0, val)
             worksheet.write(row, 1, year)
+            worksheet.write(row, 2, res[val][year]['position'])
             if cnt[val][year] != 4:    
-                col = 2
+                col = 3
                 for name in res[val][year]:
+                    if name == 'position':
+                        continue
                     worksheet.write(row, col, 0)
                     col += 1
                 row += 1
             else:
-                col = 2
+                col = 3
                 for name in res[val][year]:
+                    if name == 'position':
+                        continue
                     worksheet.write(row, col, res[val][year][name])
                     col += 1
                 row += 1
     
 
     # 保存
-    workbook.save("output.xls")
+    workbook.save("output/output.xls")
 
 
 
