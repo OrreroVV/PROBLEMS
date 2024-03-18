@@ -16,6 +16,9 @@ def work():
     num_rows = len(df)
     cnt = {}
     res = {}
+    rate = {}
+    suml = {}
+    sumr = {}
     # 获取第一行的列名称
     column_names = df.columns
     
@@ -51,17 +54,47 @@ def work():
         for column_name, value in row.items():
             if column_name not in st:
                 continue
-            
+            if value == 0:
+                cnt[idx][year] = 0
             
             if idx not in res:
                 res[idx] = {}
+            if idx not in rate:
+                rate[idx] = {}
+            if idx not in suml:
+                suml[idx] = {}
+            if idx not in sumr:
+                sumr[idx] = {}
+            
 
             if year not in res[idx]:
                 res[idx][year] = {}
+            if year not in rate[idx]:
+                rate[idx][year] = {}
+                
+            if year not in suml[idx]:
+                suml[idx][year] = {}
+            if year not in sumr[idx]:
+                sumr[idx][year] = {}
             
+
+
             if "position" not in res[idx][year]:
                 res[idx][year]["position"] = position
             
+            rate[idx][year][column_name] = "INF"
+            
+            if column_name not in suml[idx][year]:
+                suml[idx][year][column_name] = []
+                suml[idx][year][column_name].append(0)
+            
+            suml[idx][year][column_name].append(0)
+            if column_name not in sumr[idx][year]:
+                sumr[idx][year][column_name] = []
+                sumr[idx][year][column_name].append(0)
+                
+            sumr[idx][year][column_name].append(0)
+
             if column_name not in res[idx][year]:
                 res[idx][year][column_name] = value
             else:
@@ -80,16 +113,89 @@ def work():
 
     for val in res:
         val = int(val)
-        last = -1
         for year in res[val]:
             if year == 2022:
                 continue
-            print(val, year, res[val][year]['position'])
+            
+            last = -1
+            if cnt[val][year] == 4:    
+                for name in res[val][year]:
+                    if name == 'position':
+                        continue
+
+                    if last == -1:
+                        last = res[val][year][name]
+                        continue
+
+                    if last != 0:
+                        rate[val][year][name] = (res[val][year][name] - last) / last; 
+
+                    # print(val, year, res[val][year]['position'], rate[val][year][name])
+                    last = res[val][year][name]
+            else:
+                for name in res[val][year]:
+                    if name == 'position':
+                        continue
+                    res[val][year][name] = 0
+
+
+    for val in res:
+        val = int(val)
+        for year in res[val]:
+            if year == 2022:
+                continue
+            
             if cnt[val][year] != 4:    
                 for name in res[val][year]:
-                    print(1)
-        
-        last = val
+                    if name == 'position':
+                        continue
+                    
+                    numl = 0
+                    for i in range(1, 5):
+                        if year - i in rate[val] and res[val][year - i][name] != 0:
+                            numl = -i
+                        else:
+                            break
+                    if numl >= 2:
+                        avg = 0
+                        for i in range(1, numl):
+                            avg += (res[val][year - i][name] - res[val][year - i - 1][name]) / res[val][year - i - 1][name]
+                        
+                        avg /= numl - 1
+                        res[val][year][name] = (1 + avg) * res[val][year - 1][name]
+                        if val == 900956 and year == 2020:
+                            print(val, year, name, res[val][year][name])
+
+    for val in res:
+        val = int(val)
+        for year in range(2000, 2021, -1):
+            
+            if year not in res[val]:
+                continue
+
+            if cnt[val][year] != 4:    
+                for name in res[val][year]:
+                    if res[val][year][name] != 0:
+                        continue
+                    if name == 'position':
+                        continue
+                    
+                    numr = 0
+                    for i in range(1, 5):
+                        if year + i in rate[val] and res[val][year + i][name] != 0:
+                            numr = i
+                        else:
+                            break
+                    if numr >= 2:
+                        avg = 0
+                        # year + i, year + i + 1
+                        for i in range(1, numr):
+                            avg += (res[val][year + i][name] - res[val][year + i + 1][name]) / res[val][year + i + 1][name]
+                        
+                        avg /= numr - 1
+                        res[val][year][name] = (1 - avg) * res[val][year + 1][name]
+                        # print(val, year, name, avg, res[val][year][name])
+
 
 
     row = 0
@@ -126,22 +232,14 @@ def work():
             worksheet.write(row, 0, val)
             worksheet.write(row, 1, year)
             worksheet.write(row, 2, res[val][year]['position'])
-            if cnt[val][year] != 4:    
-                col = 3
-                for name in res[val][year]:
-                    if name == 'position':
-                        continue
-                    worksheet.write(row, col, 0)
-                    col += 1
-                row += 1
-            else:
-                col = 3
-                for name in res[val][year]:
-                    if name == 'position':
-                        continue
-                    worksheet.write(row, col, res[val][year][name])
-                    col += 1
-                row += 1
+            col = 3
+            for name in res[val][year]:
+                if name == 'position':
+                    continue
+                worksheet.write(row, col, res[val][year][name])
+                col += 1
+            row += 1
+
     
 
     # 保存
